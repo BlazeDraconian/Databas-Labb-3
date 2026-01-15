@@ -14,7 +14,7 @@ namespace Labb3.ViewModels
 {
     class MainWindowViewModel: ViewModelBase
     {
-        private const string SaveFilePath = "questionpacks.json";
+        
         private QuestionPackViewModel _selectedPack;
 
 		public QuestionPackViewModel SelectedPack
@@ -74,7 +74,7 @@ namespace Labb3.ViewModels
 			//ActivePack.Questions.Add(new Question($"Vad heter Sveriges huvudstad?", "Stockholm", "Göteborg", " Malmö", "Helsingborg"));
             Model = ConfigurationViewModel;
             PlayCommand = new DelegateCommand(PlayGame);
-            LoadPacksFromFile();
+           
 
         }
 
@@ -86,46 +86,7 @@ namespace Labb3.ViewModels
         }
 
 
-        public void SavePacksToFile()
-        {
-            try
-            {
-                var packs = Packs.Select(p => p.Model).ToList(); 
-                var json = JsonSerializer.Serialize(packs, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-                File.WriteAllText(SaveFilePath, json);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Fel vid sparning: " + ex.Message);
-            }
-        }
-
-        public void LoadPacksFromFile()
-        {
-            if (!File.Exists(SaveFilePath))
-                return;
-
-            try
-            {
-                var json = File.ReadAllText(SaveFilePath);
-                var packs = JsonSerializer.Deserialize<List<QuestionPack>>(json);
-                if (packs == null)
-                    return;
-
-                Packs.Clear();
-                foreach (var pack in packs)
-                    Packs.Add(new QuestionPackViewModel(pack));
-
-                ActivePack = Packs.FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Fel vid inläsning: " + ex.Message);
-            }
-        }
+      
     }
 
 
