@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 
 namespace Labb3.ViewModels
@@ -26,7 +27,7 @@ namespace Labb3.ViewModels
                 q.PropertyChanged += Question_PropertyChanged;
         }
 
-        private void Questions_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private async void Questions_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
             {
@@ -58,7 +59,7 @@ namespace Labb3.ViewModels
             }
 
             var mwvm = App.Current.MainWindow.DataContext as MainWindowViewModel;
-            mwvm?.SavePacksToFile();
+            await mwvm.SavePacksToDbAsync();
         }
 
         public string Name
@@ -115,11 +116,12 @@ namespace Labb3.ViewModels
             }
         }
 
-        private void Question_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private async void Question_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             
             var mwvm = App.Current.MainWindow.DataContext as MainWindowViewModel;
-            mwvm?.SavePacksToFile();
+            if (mwvm != null) 
+              await mwvm.SavePacksToDbAsync();
         }
 
 

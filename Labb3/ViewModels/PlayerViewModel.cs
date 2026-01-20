@@ -171,7 +171,7 @@ namespace Labb3.ViewModels
 
         public Random RandomQuestions { get; private set; }
 
-        public void newQuestionPack(object? obj)
+        public async void newQuestionPack(object? obj)
         {
             var dialog = new CreateNewPackDialog();
             bool? result = dialog.ShowDialog();
@@ -189,7 +189,7 @@ namespace Labb3.ViewModels
 
                 _mainWindowViewModel.Packs.Add(newPackVM);
                 _mainWindowViewModel.ActivePack = newPackVM;
-                _mainWindowViewModel.SavePacksToFile();
+                await _mainWindowViewModel.SavePacksToDbAsync();
 
             }
         }
@@ -215,7 +215,7 @@ namespace Labb3.ViewModels
             _mainWindowViewModel.ActivePack = (QuestionPackViewModel)obj;
         }
 
-        private void deleteQuestionPack(object? obj)
+        private async void deleteQuestionPack(object? obj)
         {
             if (_mainWindowViewModel is null)
             {
@@ -223,7 +223,7 @@ namespace Labb3.ViewModels
             }
 
             _mainWindowViewModel.Packs.Remove(_mainWindowViewModel.ActivePack);
-            _mainWindowViewModel.SavePacksToFile();
+            await _mainWindowViewModel.SavePacksToDbAsync();
 
             if (_mainWindowViewModel.Packs.Any())
             {
@@ -251,7 +251,7 @@ namespace Labb3.ViewModels
             }
         }
 
-        public void addQuestion(object? obj)
+        public async void addQuestion(object? obj)
         {
             if (_mainWindowViewModel?.ActivePack == null)
                 return;
@@ -266,7 +266,7 @@ namespace Labb3.ViewModels
             };
 
             _mainWindowViewModel.ActivePack.Questions.Add(newQuestion);
-            _mainWindowViewModel.SavePacksToFile();
+            await _mainWindowViewModel.SavePacksToDbAsync();
         }
 
         public void removeQuestion(object? obj)
