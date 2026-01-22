@@ -126,6 +126,7 @@ namespace Labb3.ViewModels
 
 
         public ObservableCollection<Question> Questions { get; set; }
+        
 
         public QuestionPack Model => _model;
     }

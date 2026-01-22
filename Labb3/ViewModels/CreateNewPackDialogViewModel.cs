@@ -1,5 +1,6 @@
 ﻿using Labb3.Command;
 using Labb3.Models;
+using System.Collections.ObjectModel;
 
 namespace Labb3.ViewModels
 {
@@ -9,7 +10,7 @@ namespace Labb3.ViewModels
 
         public QuestionPackViewModel NewPack { get; set; } = new QuestionPackViewModel(new QuestionPack("Enter Name"));
 
-
+        public ObservableCollection<string> Categories { get; set; }
 
         public DelegateCommand CreateCommand { get; }
         public DelegateCommand CancelCommand { get; }

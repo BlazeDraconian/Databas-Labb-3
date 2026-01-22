@@ -41,6 +41,7 @@ namespace Labb3.ViewModels
         }
         private ViewModelBase _model;
         public ObservableCollection<QuestionPackViewModel> Packs { get; } = new();
+        
 
 		private QuestionPackViewModel _activePack;
 

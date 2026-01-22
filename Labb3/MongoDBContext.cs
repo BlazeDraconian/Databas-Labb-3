@@ -24,5 +24,8 @@ namespace Labb3
         public IMongoCollection<QuestionPack> QuestionPacks =>
             _database.GetCollection<QuestionPack>("QuestionPacks");
 
+        public IMongoCollection<Category> Categories =>
+            _database.GetCollection<Category>("Categories");
+
     }
 }
