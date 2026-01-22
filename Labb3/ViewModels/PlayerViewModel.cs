@@ -103,7 +103,7 @@ namespace Labb3.ViewModels
             NewQuestionPack = new DelegateCommand(newQuestionPack);
             SelectQuestionPack = new DelegateCommand(selectQuestionPack);
             DeleteQuestionPack = new DelegateCommand(deleteQuestionPack);
-            ImportQuestionPack = new DelegateCommand(importQuestionPack);
+            //ImportQuestionPack = new DelegateCommand(importQuestionPack);
             PackOptions = new DelegateCommand(packOptions);
 
             AddQuestion = new DelegateCommand(addQuestion);
@@ -236,20 +236,20 @@ namespace Labb3.ViewModels
             }
         }
 
-        public void importQuestionPack(object? obj)
-        {
-            var dialog = new Microsoft.Win32.OpenFileDialog();
+       // public void importQuestionPack(object? obj)
+        //{
+           // var dialog = new Microsoft.Win32.OpenFileDialog();
 
-            if (dialog.ShowDialog() == true)
-            {
-                var json = File.ReadAllText(dialog.FileName);
-                var pack = System.Text.Json.JsonSerializer.Deserialize<QuestionPack>(json);
+            //if (dialog.ShowDialog() == true)
+            //{
+            //    //var json = File.ReadAllText(dialog.FileName);
+            //    //var pack = System.Text.Json.JsonSerializer.Deserialize<QuestionPack>(json);
 
-                var newPack = new QuestionPackViewModel(pack);
-                _mainWindowViewModel!.Packs.Add(newPack);
-                _mainWindowViewModel.ActivePack = newPack;
-            }
-        }
+            //    var newPack = new QuestionPackViewModel(pack);
+            //    _mainWindowViewModel!.Packs.Add(newPack);
+            //    _mainWindowViewModel.ActivePack = newPack;
+            //}
+       // }
 
         public async void addQuestion(object? obj)
         {

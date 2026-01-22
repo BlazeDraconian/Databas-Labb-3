@@ -74,9 +74,9 @@ namespace Labb3.ViewModels
 			ConfigurationViewModel = new ConfigurationViewModel(this);
            
 
-            var pack = new QuestionPack("MyQuestionPack");
-            ActivePack = new QuestionPackViewModel(pack);
-			//ActivePack.Questions.Add(new Question($"Vad heter Sveriges huvudstad?", "Stockholm", "Göteborg", " Malmö", "Helsingborg"));
+            //var pack = new QuestionPack("MyQuestionPack");
+            //ActivePack = new QuestionPackViewModel(pack);
+			
             Model = ConfigurationViewModel;
             PlayCommand = new DelegateCommand(PlayGame);
 
