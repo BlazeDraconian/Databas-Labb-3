@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Labb3.Repositories
 {
@@ -24,13 +25,15 @@ namespace Labb3.Repositories
                 .ToListAsync();
         }
 
-        public async Task AddAsync(Category category)
+        public async Task AddAsync(string name)
         {
+            var category = new Category { Name = name };
             await _context.Categories.InsertOneAsync(category);
         }
 
         public async Task DeleteAsync(string name)
         {
+            
             await _context.Categories.DeleteOneAsync(c => c.Name == name);
         }
     }

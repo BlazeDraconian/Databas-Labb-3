@@ -92,7 +92,17 @@ namespace Labb3.ViewModels
                
             }
         }
-        
+
+        public string Category
+        {
+            get => _model.Category;
+            set 
+            {
+                _model.Category = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private Question? _selectedQuestion;
 
         public Question? SelectedQuestion
