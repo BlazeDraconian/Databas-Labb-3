@@ -1,15 +1,16 @@
 ﻿using Labb3.Command;
 using Labb3.Models;
+using Labb3.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.IO;
-using Labb3.Repositories;
+using System.Windows;
 
 namespace Labb3.ViewModels
 {
@@ -81,7 +82,7 @@ namespace Labb3.ViewModels
             Model = ConfigurationViewModel;
             PlayCommand = new DelegateCommand(PlayGame);
 
-            LoadPacksFromDbAsync().Wait();
+            
         }
 
 
@@ -103,17 +104,23 @@ namespace Labb3.ViewModels
 
         public async Task LoadPacksFromDbAsync()
         {
-            var packs = await _repository.GetAllAsync();
-            packs.Clear();
+            var packsFromDB = await _repository.GetAllAsync();
+            Packs.Clear();
 
-            foreach (var pack in packs)
+            foreach (var pack in packsFromDB)
             {
                 Packs.Add(new QuestionPackViewModel(pack));
             }
 
-            ActivePack = Packs.FirstOrDefault();
+            if (Packs.Count > 0)
+            {
+                ActivePack = Packs[0];
+                SelectedPack = Packs[0];
+            }
         }
-      
+
+        
+
     }
 
 

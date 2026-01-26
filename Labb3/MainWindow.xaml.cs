@@ -20,10 +20,15 @@ namespace Labb3
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += MainWindow_Loaded;
+        }
 
-            //DataContext =  new MainWindowViewModel();
-
-
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm)
+            {
+                await vm.LoadPacksFromDbAsync();
+            }
         }
 
     }

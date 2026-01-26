@@ -24,27 +24,38 @@ namespace Labb3.Repositories
             return result;
         }
 
-        public async Task <QuestionPack> DeletePackAsync(string packName)
+        public async Task <QuestionPack> DeletePackAsync(string packId)
         {
-            var filter = Builders<QuestionPack>.Filter.Eq(p => p.Name, packName);
-            var result = await _context.QuestionPacks.DeleteOneAsync(filter);
-            return null;
-    
+            var filter = Builders<QuestionPack>.Filter.Eq(p => p.Id, packId);
+            var result = await _context.QuestionPacks.Find(filter).FirstOrDefaultAsync();
+            if (result != null)
+            {
+                await _context.QuestionPacks.DeleteOneAsync(filter);
+            }
+            return result;
         }
 
         public async Task <QuestionPack> SavePackAsync(QuestionPack pack)
         {
-            var filter = Builders<QuestionPack>
-                .Filter
-                .Eq(p => p.Name, pack.Name);
+            if (pack.Id == null)
+            {
+                await _context.QuestionPacks.InsertOneAsync(pack);
+            }
 
-            await _context.QuestionPacks.ReplaceOneAsync
-            (
-                filter,
-                pack,
-                new ReplaceOptions { IsUpsert = true}
-            );
-            return pack;
+            else
+            {
+                var filter = Builders<QuestionPack>.Filter.Eq(p => p.Id, pack.Id);
+
+                await _context.QuestionPacks.ReplaceOneAsync
+                (
+                    filter,
+                    pack,
+                    new ReplaceOptions { IsUpsert = true }
+                );
+
+            }
+                return pack;
+            
         }
 
         

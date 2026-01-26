@@ -1,4 +1,8 @@
-﻿namespace Labb3.Models
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+
+namespace Labb3.Models
 {
     public enum Difficulty { Easy, Medium, Hard }
     public class QuestionPack
@@ -15,6 +19,9 @@
             Questions = new List<Question>();
             Category = category;
         }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
         public string Name { get; set; }
         public Difficulty Difficulty { get; set; }

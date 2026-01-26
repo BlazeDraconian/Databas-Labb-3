@@ -18,6 +18,8 @@ namespace Labb3.ViewModels
 
         public DelegateCommand AddCategoryCommand { get; }
 
+        public DelegateCommand DeleteCategoryCommand { get; }
+
         public string? NewCategoryName { get; set; }
         public Array Difficulties => Enum.GetValues(typeof(Difficulty));
 
@@ -67,6 +69,19 @@ namespace Labb3.ViewModels
             RaisePropertyChanged(nameof(NewCategoryName)); 
         }
 
+        private async void DeleteCategory(object? obj)
+        {
+            if(string.IsNullOrWhiteSpace(SelectedCategory))
+                return;
+
+            var context = new MongoDBContext();
+            var repo = new CategoryRepository(context);
+            await repo.DeleteAsync(SelectedCategory);
+            Categories.Remove(SelectedCategory);
+            SelectedCategory = null;
+            RaisePropertyChanged(nameof(SelectedCategory));
+        }
+
         private string? _selectedCategory;
         public string? SelectedCategory
         {
@@ -99,6 +114,7 @@ namespace Labb3.ViewModels
             });
 
             AddCategoryCommand = new DelegateCommand(AddCategory);
+            DeleteCategoryCommand = new DelegateCommand(DeleteCategory);
 
 
         }
