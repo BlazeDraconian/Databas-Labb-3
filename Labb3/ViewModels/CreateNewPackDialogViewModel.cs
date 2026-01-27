@@ -8,10 +8,12 @@ namespace Labb3.ViewModels
 
     public class CreateNewPackDialogViewModel : ViewModelBase
     {
+        private readonly CategoryRepository _categoryRepository;
+
 
         public QuestionPackViewModel NewPack { get; set; } = new QuestionPackViewModel(new QuestionPack("Enter Name"));
 
-        public ObservableCollection<string> Categories { get; set; }
+        public ObservableCollection<Category> Categories { get; set; }
 
         public DelegateCommand CreateCommand { get; }
         public DelegateCommand CancelCommand { get; }
@@ -20,7 +22,7 @@ namespace Labb3.ViewModels
 
         public DelegateCommand DeleteCategoryCommand { get; }
 
-        public string? NewCategoryName { get; set; }
+        public string? NewCategoryName { get; set; } = "";
         public Array Difficulties => Enum.GetValues(typeof(Difficulty));
 
         private bool? _dialogResult;
@@ -39,13 +41,25 @@ namespace Labb3.ViewModels
         {
             CreateCommand = new DelegateCommand(Create);
             CancelCommand = new DelegateCommand(Cancel);
+            AddCategoryCommand = new DelegateCommand(AddCategory);
+            DeleteCategoryCommand = new DelegateCommand(DeleteCategory);
+            _ = LoadCategoriesAsync();
         }
 
 
         private void Create(object? obj)
         {
-            NewPack.Category = SelectedCategory;
-            DialogResult = true;
+            if (SelectedCategory != null)
+            {
+                NewPack.Category = SelectedCategory.Name;
+            }
+
+            else
+            {
+                NewPack.Category = "No Category";
+            }
+
+                DialogResult = true;
         }
 
         private void Cancel(object? obj)
@@ -60,9 +74,10 @@ namespace Labb3.ViewModels
 
             var context = new MongoDBContext();
             var repo = new CategoryRepository(context);
-            await repo.AddAsync(NewCategoryName);
-            Categories.Add(NewCategoryName);
-            SelectedCategory = NewCategoryName;
+            var category = new Category { Name = NewCategoryName };
+            await repo.AddAsync(category);
+            Categories.Add(category);
+            SelectedCategory = category;
 
             NewCategoryName = "Write category name here";
 
@@ -71,19 +86,28 @@ namespace Labb3.ViewModels
 
         private async void DeleteCategory(object? obj)
         {
-            if(string.IsNullOrWhiteSpace(SelectedCategory))
+            if(SelectedCategory == null)
                 return;
 
-            var context = new MongoDBContext();
-            var repo = new CategoryRepository(context);
-            await repo.DeleteAsync(SelectedCategory);
+            await _categoryRepository.DeleteAsync(SelectedCategory);
             Categories.Remove(SelectedCategory);
             SelectedCategory = null;
             RaisePropertyChanged(nameof(SelectedCategory));
         }
 
-        private string? _selectedCategory;
-        public string? SelectedCategory
+        private async Task LoadCategoriesAsync()
+        {
+            var context = new MongoDBContext();
+            var repo = new CategoryRepository(context);
+            var categoriesFromDb = await repo.GetAllAsync();
+            //Categories.Clear();
+
+            Categories = new ObservableCollection<Category> (categoriesFromDb);
+            RaisePropertyChanged(nameof (Categories));
+        }
+
+        private Category? _selectedCategory;
+        public Category? SelectedCategory
         {
             get => _selectedCategory;
             set 
@@ -98,12 +122,14 @@ namespace Labb3.ViewModels
             NewPack.Name = existingPack.Name;
             NewPack.Difficulty = existingPack.Difficulty;
             NewPack.TimeLimitInSeconds = existingPack.TimeLimitInSeconds;
+            
 
             CreateCommand = new DelegateCommand((_) =>
             {
                 existingPack.Name = NewPack.Name;
                 existingPack.Difficulty = NewPack.Difficulty;
                 existingPack.TimeLimitInSeconds = NewPack.TimeLimitInSeconds;
+               
 
                 DialogResult = true;
             });
@@ -112,7 +138,7 @@ namespace Labb3.ViewModels
             {
                 DialogResult = false;
             });
-
+            
             AddCategoryCommand = new DelegateCommand(AddCategory);
             DeleteCategoryCommand = new DelegateCommand(DeleteCategory);
 

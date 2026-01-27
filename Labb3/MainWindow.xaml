@@ -10,9 +10,9 @@
         mc:Ignorable="d"
        d:Height="450" d:Width="800"
         Title="MainWindow" Height="650" Width="1100" FontSize="24">
-    <Window.DataContext>
+    <!--<Window.DataContext>
         <viewmodels:MainWindowViewModel/>
-    </Window.DataContext>
+    </Window.DataContext>-->
 
     
     <Window.Resources>
@@ -46,6 +46,7 @@
     </Window.InputBindings>
 
     <Grid>
+     
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />

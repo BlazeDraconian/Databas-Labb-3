@@ -25,16 +25,15 @@ namespace Labb3.Repositories
                 .ToListAsync();
         }
 
-        public async Task AddAsync(string name)
+        public async Task AddAsync(Category category)
         {
-            var category = new Category { Name = name };
             await _context.Categories.InsertOneAsync(category);
         }
 
-        public async Task DeleteAsync(string name)
+        public async Task DeleteAsync(Category category)
         {
-            
-            await _context.Categories.DeleteOneAsync(c => c.Name == name);
+            var filter = Builders<Category>.Filter.Eq(c=> c.Id, category.Id);
+            await _context.Categories.DeleteOneAsync(filter);
         }
     }
 }

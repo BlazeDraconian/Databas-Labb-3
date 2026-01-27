@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Labb3.Dialogs" xmlns:viewmodels="clr-namespace:Labb3.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:CreateNewPackDialogViewModel}"
         
         mc:Ignorable="d"
-        Title="New Question Pack" Height="320" Width="340">
+        Title="New Question Pack" Height="380" Width="340">
 
     <Window.Resources>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
@@ -39,7 +39,7 @@
         <TextBlock Grid.Row="4" Text=" seconds" Margin="5,11,0,0" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
 
         <TextBlock Grid.Row="6" Margin="0,10,0,0" Text="Category:" FontWeight="Bold" HorizontalAlignment="Left"/>
-        <ComboBox Grid.Row="7"  FontWeight="Bold" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
+        <ComboBox Grid.Row="7"  FontWeight="Bold" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" DisplayMemberPath="Name"/>
         <TextBlock Grid.Row="8" Text="New Category" Margin="0,10,0,0" HorizontalAlignment="Left"/>
         <TextBox Grid.Row="8"   Text="{Binding NewCategoryName}" Margin="0,10" Height="20"/>
         <Button Grid.Row="8" Content="Add Category" Command="{Binding AddCategoryCommand, Converter={StaticResource NullToVisibilityConverter}}" Width="80" Height="20" HorizontalAlignment="Right"/>

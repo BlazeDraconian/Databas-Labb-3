@@ -40,7 +40,8 @@
                             <Run Text=" (" />
                             <Run Text="{Binding TimeLimitInSeconds}" />
                             <Run Text="s)" />
-                            </TextBlock>
+                            <Run Text="{Binding Category}"/>
+                        </TextBlock>
                         </DataTemplate>
                     </MenuItem.ItemTemplate>
 
