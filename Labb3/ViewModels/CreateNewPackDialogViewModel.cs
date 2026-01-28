@@ -2,6 +2,7 @@
 using Labb3.Models;
 using Labb3.Repositories;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Labb3.ViewModels
 {
@@ -39,11 +40,22 @@ namespace Labb3.ViewModels
 
         public CreateNewPackDialogViewModel()
         {
+            
+            var context = new MongoDBContext();
+            _categoryRepository = new CategoryRepository(context);
+            Categories = new ObservableCollection<Category>();
+            
+            SelectedCategory = Categories.FirstOrDefault();
+            Categories.CollectionChanged += (s, e) =>
+            {
+                Console.WriteLine($"Categories count: {Categories.Count}");
+            };
             CreateCommand = new DelegateCommand(Create);
             CancelCommand = new DelegateCommand(Cancel);
             AddCategoryCommand = new DelegateCommand(AddCategory);
             DeleteCategoryCommand = new DelegateCommand(DeleteCategory);
             _ = LoadCategoriesAsync();
+            
         }
 
 
@@ -71,28 +83,39 @@ namespace Labb3.ViewModels
         {
             if (string.IsNullOrWhiteSpace(NewCategoryName))
                 return;
+            try
+            {
+                var category = new Category { Name = NewCategoryName };
+                await _categoryRepository.AddAsync(category);
+                Categories.Add(category);
+                SelectedCategory = category;
 
-            var context = new MongoDBContext();
-            var repo = new CategoryRepository(context);
-            var category = new Category { Name = NewCategoryName };
-            await repo.AddAsync(category);
-            Categories.Add(category);
-            SelectedCategory = category;
+                NewCategoryName = string.Empty;
 
-            NewCategoryName = "Write category name here";
-
-            RaisePropertyChanged(nameof(NewCategoryName)); 
+                RaisePropertyChanged(nameof(NewCategoryName));
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show("Error adding category: " + ex.Message);
+            }
         }
 
         private async void DeleteCategory(object? obj)
         {
             if(SelectedCategory == null)
                 return;
+            try
+            {
+                await _categoryRepository.DeleteAsync(SelectedCategory);
+                Categories.Remove(SelectedCategory);
+                SelectedCategory = null;
+                RaisePropertyChanged(nameof(SelectedCategory));
+            }
 
-            await _categoryRepository.DeleteAsync(SelectedCategory);
-            Categories.Remove(SelectedCategory);
-            SelectedCategory = null;
-            RaisePropertyChanged(nameof(SelectedCategory));
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error deleting category: " + ex.Message);
+            }
         }
 
         private async Task LoadCategoriesAsync()
@@ -100,10 +123,16 @@ namespace Labb3.ViewModels
             var context = new MongoDBContext();
             var repo = new CategoryRepository(context);
             var categoriesFromDb = await repo.GetAllAsync();
-            //Categories.Clear();
-
-            Categories = new ObservableCollection<Category> (categoriesFromDb);
-            RaisePropertyChanged(nameof (Categories));
+            MessageBox.Show($"Loaded categories from DB: {categoriesFromDb.Count}");
+            
+        
+            if (categoriesFromDb.Count > 0)
+            Categories.Clear();
+            foreach (var category in categoriesFromDb)
+            {
+                Categories.Add(category);
+                MessageBox.Show($"Added category: {category.Name}");
+            }
         }
 
         private Category? _selectedCategory;

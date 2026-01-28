@@ -74,7 +74,7 @@ namespace Labb3.ViewModels
             _repository = new QuestionPackRepository(mongoContext);
             PlayerViewModel = new PlayerViewModel(this);
 			ConfigurationViewModel = new ConfigurationViewModel(this);
-            _ = ConfigurationViewModel.InitializeAsync();
+            //_ = ConfigurationViewModel.InitializeAsync();
 
             //var pack = new QuestionPack("MyQuestionPack");
             //ActivePack = new QuestionPackViewModel(pack);

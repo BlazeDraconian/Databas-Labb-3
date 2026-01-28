@@ -46,22 +46,5 @@ namespace Labb3.ViewModels
             
         }
 
-        public async Task LoadCategoriesAsync()
-        {
-            var categoriesFromDb = await _categoryRepository.GetAllAsync();
-
-            Categories.Clear();
-
-            foreach (var category in categoriesFromDb)
-            {
-                Categories.Add(category);
-            }
-        }
-
-        public async Task InitializeAsync()
-        {
-            await LoadCategoriesAsync();
-        }
-
     }
 }
