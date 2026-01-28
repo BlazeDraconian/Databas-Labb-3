@@ -57,7 +57,5 @@ namespace Labb3.Repositories
                 return pack;
             
         }
-
-        
     }
 }

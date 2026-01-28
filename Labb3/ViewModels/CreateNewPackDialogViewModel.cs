@@ -123,7 +123,7 @@ namespace Labb3.ViewModels
             var context = new MongoDBContext();
             var repo = new CategoryRepository(context);
             var categoriesFromDb = await repo.GetAllAsync();
-            MessageBox.Show($"Loaded categories from DB: {categoriesFromDb.Count}");
+            
             
         
             if (categoriesFromDb.Count > 0)
@@ -148,9 +148,15 @@ namespace Labb3.ViewModels
 
         public CreateNewPackDialogViewModel(QuestionPackViewModel existingPack)
         {
+            var context = new MongoDBContext();
+            _categoryRepository = new CategoryRepository(context);
+            Categories = new ObservableCollection<Category>();
+            _ = LoadCategoriesAsync();
+
             NewPack.Name = existingPack.Name;
             NewPack.Difficulty = existingPack.Difficulty;
             NewPack.TimeLimitInSeconds = existingPack.TimeLimitInSeconds;
+            
             
 
             CreateCommand = new DelegateCommand((_) =>
@@ -158,8 +164,7 @@ namespace Labb3.ViewModels
                 existingPack.Name = NewPack.Name;
                 existingPack.Difficulty = NewPack.Difficulty;
                 existingPack.TimeLimitInSeconds = NewPack.TimeLimitInSeconds;
-               
-
+                existingPack.Category = SelectedCategory?.Name;
                 DialogResult = true;
             });
 
@@ -169,9 +174,7 @@ namespace Labb3.ViewModels
             });
             
             AddCategoryCommand = new DelegateCommand(AddCategory);
-            DeleteCategoryCommand = new DelegateCommand(DeleteCategory);
-
-
+            DeleteCategoryCommand = new DelegateCommand(DeleteCategory);  
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Labb3.Command;
 using Labb3.Dialogs;
 using Labb3.Models;
+using Labb3.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -20,6 +21,7 @@ namespace Labb3.ViewModels
     class PlayerViewModel : ViewModelBase
     {
         private readonly MainWindowViewModel? _mainWindowViewModel;
+        private readonly QuestionPackRepository _repository;
 
         private int _score = 0;
         public int Score
@@ -96,7 +98,11 @@ namespace Labb3.ViewModels
 
         public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
         {
+            
             this._mainWindowViewModel = mainWindowViewModel;
+            var context = new MongoDBContext();
+            _repository = new QuestionPackRepository(context);
+
             SetPackNameCommand = new DelegateCommand(SetpackName, CanSetPackName);
             PlayCommand = new DelegateCommand(PlayGame);
             ExitCommand = new DelegateCommand(EndGame);
@@ -184,6 +190,7 @@ namespace Labb3.ViewModels
                 {
                     Difficulty = vm.NewPack.Difficulty,
                     TimeLimitInSeconds = vm.NewPack.TimeLimitInSeconds,
+                    Category = vm.NewPack.Category,
                 };
                 var newPackVM = new QuestionPackViewModel(newPack);
 
@@ -217,13 +224,20 @@ namespace Labb3.ViewModels
 
         private async void deleteQuestionPack(object? obj)
         {
-            if (_mainWindowViewModel is null)
+            if (_mainWindowViewModel is null || _mainWindowViewModel.ActivePack == null)
             {
                 return;
             }
+            
+            var packToDelete = _mainWindowViewModel.ActivePack;
 
-            _mainWindowViewModel.Packs.Remove(_mainWindowViewModel.ActivePack);
-            await _mainWindowViewModel.SavePacksToDbAsync();
+
+            if (!string.IsNullOrEmpty(packToDelete.Model.Id))
+            {
+                await _repository.DeletePackAsync(packToDelete.Model.Id);
+            }
+            _mainWindowViewModel.Packs.Remove(packToDelete);
+            
 
             if (_mainWindowViewModel.Packs.Any())
             {
