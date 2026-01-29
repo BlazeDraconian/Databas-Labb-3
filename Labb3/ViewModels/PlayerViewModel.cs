@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -109,7 +110,7 @@ namespace Labb3.ViewModels
             NewQuestionPack = new DelegateCommand(newQuestionPack);
             SelectQuestionPack = new DelegateCommand(selectQuestionPack);
             DeleteQuestionPack = new DelegateCommand(deleteQuestionPack);
-            //ImportQuestionPack = new DelegateCommand(importQuestionPack);
+            ImportQuestionPack = new DelegateCommand(importQuestionPack);
             PackOptions = new DelegateCommand(packOptions);
 
             AddQuestion = new DelegateCommand(addQuestion);
@@ -250,20 +251,43 @@ namespace Labb3.ViewModels
             }
         }
 
-       // public void importQuestionPack(object? obj)
-        //{
-           // var dialog = new Microsoft.Win32.OpenFileDialog();
+        public async void importQuestionPack(object? obj)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "JSON files (*.json)|*.json",
+                Title = "Import Question Pack"
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                return;
+            }
 
-            //if (dialog.ShowDialog() == true)
-            //{
-            //    //var json = File.ReadAllText(dialog.FileName);
-            //    //var pack = System.Text.Json.JsonSerializer.Deserialize<QuestionPack>(json);
+            try
+            {
+                var json = File.ReadAllText(dialog.FileName);
+                var pack = System.Text.Json.JsonSerializer.Deserialize<QuestionPack>(json);
+                if (pack == null)
+                {
+                    return;
+                }
 
-            //    var newPack = new QuestionPackViewModel(pack);
-            //    _mainWindowViewModel!.Packs.Add(newPack);
-            //    _mainWindowViewModel.ActivePack = newPack;
-            //}
-       // }
+                pack.Id = null;
+
+                var context = new MongoDBContext();
+                var repository = new QuestionPackRepository(context);
+                
+                var newPackVM = new QuestionPackViewModel(pack);
+                _mainWindowViewModel!.Packs.Add(newPackVM);
+                _mainWindowViewModel.ActivePack = newPackVM;
+
+                await _mainWindowViewModel.SavePacksToDbAsync();
+            }
+            catch (Exception ex) 
+            {
+                System.Windows.MessageBox.Show($"Import failed:\n{ex.Message}","Error",MessageBoxButton.OK,MessageBoxImage.Error);
+            }
+        }
 
         public async void addQuestion(object? obj)
         {
